@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 import calcCER from "../../node_modules/character-error-rate/index";
@@ -33,6 +33,8 @@ import config from "./urlConstants.json";
 import { filterBadWords } from "./Badwords";
 import S3Client from "../config/awsS3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { MyContext } from "../views/Practice/Practice";
+import { DiscoverContext } from "../components/DiscoverSentance/DiscoverSentance";
 /* eslint-disable */
 
 const AudioPath = {
@@ -58,6 +60,17 @@ const AudioPath = {
 };
 const currentIndex = localStorage.getItem("index") || 1;
 function VoiceAnalyser(props) {
+  const myContext = useContext(MyContext);
+  const discoverContext = useContext(DiscoverContext);
+  const {
+    enableNext,
+    setEnableNext,
+    isNextButtonCalled,
+    setIsNextButtonCalled,
+    setVoiceText,
+    handleNext,
+  } = myContext || discoverContext || {};
+
   const [loadCnt, setLoadCnt] = useState(0);
   const [loader, setLoader] = useState(false);
   const [pauseAudio, setPauseAudio] = useState(false);
@@ -80,10 +93,10 @@ function VoiceAnalyser(props) {
   //console.log('audio', recordedAudio, isMatching);
 
   useEffect(() => {
-    if (!props.enableNext) {
+    if (enableNext) {
       setRecordedAudio("");
     }
-  }, [props.enableNext]);
+  }, [enableNext]);
 
   const initiateValues = async () => {
     const currIndex = (await localStorage.getItem("index")) || 1;
@@ -269,26 +282,26 @@ function VoiceAnalyser(props) {
   }, [recordedAudio]);
 
   useEffect(() => {
-    if (props.isNextButtonCalled) {
+    if (isNextButtonCalled) {
       if (recordedAudioBase64 !== "") {
         const lang = getLocalData("lang") || "ta";
         fetchASROutput(lang, recordedAudioBase64);
         setLoader(true);
       }
     }
-  }, [props.isNextButtonCalled]);
+  }, [isNextButtonCalled]);
 
   useEffect(() => {
     if (recordedAudioBase64 !== "") {
-      if (props.setIsNextButtonCalled) {
-        props.setIsNextButtonCalled(false);
+      if (setIsNextButtonCalled) {
+        setIsNextButtonCalled(false);
       }
     }
   }, [recordedAudioBase64]);
 
   useEffect(() => {
     // props.updateStory();
-    props.setVoiceText(apiResponse);
+    setVoiceText(apiResponse);
     props.setRecordedAudio(recordedAudio);
   }, [apiResponse]);
 
@@ -515,24 +528,24 @@ function VoiceAnalyser(props) {
           props.updateStoredData(recordedAudio, isMatching);
         }
       }
-      if (props.handleNext) {
-        props.handleNext();
+      if (handleNext) {
+        handleNext();
         if (temp_audio !== null) {
           temp_audio.pause();
           setPauseAudio(false);
         }
       }
       setLoader(false);
-      if (props.setIsNextButtonCalled) {
-        props.setIsNextButtonCalled(false);
+      if (setIsNextButtonCalled) {
+        setIsNextButtonCalled(false);
       }
     } catch (error) {
       setLoader(false);
-      if (props.handleNext) {
-        props.handleNext();
+      if (handleNext) {
+        handleNext();
       }
-      if (props.setIsNextButtonCalled) {
-        props.setIsNextButtonCalled(false);
+      if (setIsNextButtonCalled) {
+        setIsNextButtonCalled(false);
       }
       setRecordedAudioBase64("");
       setApiResponse("error");
@@ -692,7 +705,7 @@ function VoiceAnalyser(props) {
                     isShowCase={props.isShowCase}
                     isAudioPreprocessing={isAudioPreprocessing}
                     recordedAudio={recordedAudio}
-                    setEnableNext={props.setEnableNext}
+                    setEnableNext={setEnableNext}
                     showOnlyListen={props.showOnlyListen}
                     setOpenMessageDialog={props.setOpenMessageDialog}
                   />
@@ -723,14 +736,14 @@ function VoiceAnalyser(props) {
       )}
       {!loader && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          {props.enableNext && (
+          {enableNext && (
             <Box
               sx={{ cursor: "pointer" }}
               onClick={() => {
-                if (props.setIsNextButtonCalled) {
-                  props.setIsNextButtonCalled(true);
+                if (setIsNextButtonCalled) {
+                  setIsNextButtonCalled(true);
                 } else {
-                  props.handleNext();
+                  handleNext();
                 }
               }}
             >
@@ -744,21 +757,15 @@ function VoiceAnalyser(props) {
 }
 
 VoiceAnalyser.propTypes = {
-  enableNext: PropTypes.bool.isRequired,
-  setIsNextButtonCalled: PropTypes.func,
-  handleNext: PropTypes.func.isRequired,
   originalText: PropTypes.string,
   isShowCase: PropTypes.bool,
   dontShowListen: PropTypes.bool,
-  setEnableNext: PropTypes.func.isRequired,
   showOnlyListen: PropTypes.bool,
   setOpenMessageDialog: PropTypes.func.isRequired,
   contentType: PropTypes.string.isRequired,
   currentLine: PropTypes.number.isRequired,
-  isNextButtonCalled: PropTypes.bool,
   setVoiceAnimate: PropTypes.func.isRequired,
   setRecordedAudio: PropTypes.func.isRequired,
-  setVoiceText: PropTypes.func.isRequired,
   livesData: PropTypes.object,
   contentId: PropTypes.string,
   updateStoredData: PropTypes.func.isRequired,

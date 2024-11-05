@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Grid, Radio } from "@mui/material";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { Box, Grid, Radio, Modal } from "@mui/material";
 import MainLayout from "../Layouts.jsx/MainLayout";
 import { PlayAudioButton, StopAudioButton } from "../../utils/constants";
 import VoiceAnalyser from "../../utils/VoiceAnalyser";
 import PropTypes from "prop-types";
-import { Modal } from "@mui/material";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
+import { MyContext } from "../../views/Practice/Practice";
+import { DiscoverContext } from "../DiscoverSentance/DiscoverSentance";
 
 const Mechanics5 = ({
   background,
@@ -17,8 +18,6 @@ const Mechanics5 = ({
   options = {},
   image,
   question_audio,
-  handleNext,
-  enableNext,
   showTimer,
   points,
   steps,
@@ -26,11 +25,9 @@ const Mechanics5 = ({
   level,
   progressData,
   showProgress,
-  playTeacherAudio,
   handleBack,
   disableScreen,
   loading,
-  setVoiceText,
   setRecordedAudio,
   setVoiceAnimate,
   storyLine,
@@ -38,7 +35,6 @@ const Mechanics5 = ({
   contentType,
   callUpdateLearner,
   isShowCase,
-  setEnableNext,
   selectedWord,
   wordToCheck,
   setOpenMessageDialog,
@@ -48,12 +44,13 @@ const Mechanics5 = ({
   setLivesData,
   percentage,
   fluency,
-  isNextButtonCalled,
-  setIsNextButtonCalled,
   gameOverData,
   correctness,
   audio,
 }) => {
+  const myContext = useContext(MyContext);
+  const discoverContext = useContext(DiscoverContext);
+  const { handleNext } = myContext || discoverContext || {};
   const audiosRef = useRef(
     new Array(options.length).fill(null).map(() => React.createRef())
   );
@@ -134,8 +131,6 @@ const Mechanics5 = ({
       storedData={storedData}
       resetStoredData={resetStoredData}
       background={background}
-      handleNext={handleNext}
-      enableNext={enableNext}
       showTimer={showTimer}
       points={points}
       {...{
@@ -147,7 +142,6 @@ const Mechanics5 = ({
         contentType,
         percentage,
         fluency,
-        playTeacherAudio,
         handleBack,
         isShowCase,
         startShowCase,
@@ -157,8 +151,6 @@ const Mechanics5 = ({
         gameOverData,
         loading,
         setLivesData,
-        isNextButtonCalled,
-        setIsNextButtonCalled,
       }}
     >
       <div
@@ -377,7 +369,6 @@ const Mechanics5 = ({
         <VoiceAnalyser
           pageName={"m5"}
           updateStoredData={updateStoredData}
-          setVoiceText={setVoiceText}
           setRecordedAudio={setRecordedAudio}
           setVoiceAnimate={setVoiceAnimate}
           storyLine={storyLine}
@@ -390,8 +381,6 @@ const Mechanics5 = ({
               ? options.find((option) => option.isAns === true).text
               : parentWords
           }
-          enableNext={enableNext}
-          handleNext={handleNext}
           selectedOption={options[selectedOption]}
           correctness={correctness}
           audioLink={audio ? audio : null}
@@ -399,10 +388,8 @@ const Mechanics5 = ({
             contentId,
             contentType,
             currentLine: currentStep - 1,
-            playTeacherAudio,
             callUpdateLearner,
             isShowCase,
-            setEnableNext,
             showOnlyListen: !options[selectedOption],
             setOpenMessageDialog,
             startShowCase,
@@ -412,8 +399,6 @@ const Mechanics5 = ({
             gameOverData,
             loading,
             setLivesData,
-            isNextButtonCalled,
-            setIsNextButtonCalled,
           }}
         />
       </Box>
@@ -422,14 +407,10 @@ const Mechanics5 = ({
 };
 
 Mechanics5.propTypes = {
-  handleNext: PropTypes.func.isRequired,
-  // background: PropTypes.string,
   header: PropTypes.string,
   image: PropTypes.string,
-  setVoiceText: PropTypes.func.isRequired,
   setRecordedAudio: PropTypes.func.isRequired,
   setVoiceAnimate: PropTypes.func.isRequired,
-  enableNext: PropTypes.bool,
   showTimer: PropTypes.bool,
   points: PropTypes.number,
   currentStep: PropTypes.number.isRequired,
@@ -441,28 +422,21 @@ Mechanics5.propTypes = {
   disableScreen: PropTypes.bool,
   isShowCase: PropTypes.bool,
   handleBack: PropTypes.func.isRequired,
-  setEnableNext: PropTypes.func.isRequired,
   startShowCase: PropTypes.bool,
   setStartShowCase: PropTypes.func,
   setLivesData: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   setOpenMessageDialog: PropTypes.func.isRequired,
-  isNextButtonCalled: PropTypes.bool,
-  setIsNextButtonCalled: PropTypes.func,
   background: PropTypes.bool,
   type: PropTypes.any,
-  words: PropTypes.any,
   storyLine: PropTypes.number,
   steps: PropTypes.number,
   contentId: PropTypes.any,
   contentType: PropTypes.string,
   level: PropTypes.any,
   progressData: PropTypes.object,
-  playTeacherAudio: PropTypes.func,
   livesData: PropTypes.any,
   gameOverData: PropTypes.any,
-  highlightWords: PropTypes.func,
-  matchedChar: PropTypes.any,
 };
 
 export default Mechanics5;

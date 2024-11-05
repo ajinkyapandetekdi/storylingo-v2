@@ -9,9 +9,6 @@ import practicebg2 from "../../assets/images/practice-bg2.svg";
 import practicebg3 from "../../assets/images/practice-bg3.svg";
 import gameWon from "../../assets/images/gameWon.svg";
 import gameLost from "../../assets/images/gameLost.svg";
-import correctImage from "../../assets/correct.svg";
-import wrongImage from "../../assets/wrong.svg";
-import turtleImage from "../../assets/turtle.svg";
 import clouds from "../../assets/images/clouds.svg";
 import catLoading from "../../assets/images/catLoading.gif";
 import textureImage from "../../assets/images/textureImage.png";
@@ -36,16 +33,20 @@ import {
   levelConfig,
   practiceSteps,
 } from "../../utils/constants";
+import { MyContext } from "../../views/Practice/Practice";
+import { DiscoverContext } from "../DiscoverSentance/DiscoverSentance";
 
 import { ProfileHeader } from "../Assesment/Assesment";
 import Confetti from "react-confetti";
 import LevelCompleteAudio from "../../assets/audio/levelComplete.wav";
 import gameLoseAudio from "../../assets/audio/gameLose.wav";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MainLayout = (props) => {
+  console.log("MainLayout");
+
   const levelsImages = {
     1: {
       milestone: <LevelOne />,
@@ -102,8 +103,6 @@ const MainLayout = (props) => {
 
   const LEVEL = props?.level;
   const {
-    handleNext,
-    enableNext,
     showNext = true,
     showTimer = true,
     // showScore = true,
@@ -129,11 +128,13 @@ const MainLayout = (props) => {
     storedData,
     resetStoredData,
   } = props;
+  const myContext = useContext(MyContext);
+  const discoverContext = useContext(DiscoverContext);
+  const { enableNext, handleNext } = myContext || discoverContext || {};
 
   const [shake, setShake] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(null);
   const audioRefs = useRef([]);
-
   //console.log('Main Layout Array', storedData, pageName);
 
   const handleAudioPlay = (index) => {
@@ -1180,8 +1181,6 @@ MainLayout.propTypes = {
   showProgress: PropTypes.bool,
   setOpenLangModal: PropTypes.func,
   points: PropTypes.number,
-  handleNext: PropTypes.any,
-  enableNext: PropTypes.bool,
   showNext: PropTypes.bool,
   showTimer: PropTypes.bool,
   nextLessonAndHome: PropTypes.bool,

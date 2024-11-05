@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import HomophonesFinder from "homophones";
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useContext, useEffect, useState } from "react";
 import {
   AudioBarColoredSvg,
   AudioBarSvg,
@@ -14,21 +14,19 @@ import MainLayout from "../Layouts.jsx/MainLayout";
 import correctSound from "../../assets/audio/correct.wav";
 import wrongSound from "../../assets/audio/wrong.wav";
 import VoiceAnalyser from "../../utils/VoiceAnalyser";
+import { MyContext } from "../../views/Practice/Practice";
 
 const Mechanics2 = ({
   page,
   setPage,
   type,
-  handleNext,
   background,
   header,
   parentWords,
   image,
-  setVoiceText,
   setRecordedAudio,
   setVoiceAnimate,
   storyLine,
-  enableNext,
   showTimer,
   points,
   steps,
@@ -39,16 +37,15 @@ const Mechanics2 = ({
   isDiscover,
   progressData,
   showProgress,
-  playTeacherAudio = () => {},
   callUpdateLearner,
   disableScreen,
   isShowCase,
   handleBack,
   allWords,
-  setEnableNext,
   loading,
   setOpenMessageDialog,
 }) => {
+  const { setEnableNext } = useContext(MyContext) || {};
   const [words, setWords] = useState([]);
   const [sentences, setSentences] = useState([]);
 
@@ -190,8 +187,6 @@ const Mechanics2 = ({
     <MainLayout
       pageName={"m6"}
       background={background}
-      handleNext={handleNext}
-      enableNext={enableNext}
       showTimer={showTimer}
       points={points}
       {...{
@@ -200,7 +195,6 @@ const Mechanics2 = ({
         level,
         progressData,
         showProgress,
-        playTeacherAudio,
         handleBack,
         disableScreen,
         loading,
@@ -474,23 +468,18 @@ const Mechanics2 = ({
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <VoiceAnalyser
             pageName={"m6"}
-            setVoiceText={setVoiceText}
             setRecordedAudio={setRecordedAudio}
             setVoiceAnimate={setVoiceAnimate}
             storyLine={storyLine}
             dontShowListen={true}
             // updateStory={updateStory}
             originalText={parentWords}
-            enableNext={enableNext}
-            handleNext={handleNext}
             {...{
               contentId,
               contentType,
               currentLine: currentStep - 1,
-              playTeacherAudio,
               callUpdateLearner,
               isShowCase,
-              setEnableNext,
               showOnlyListen: selectedWord != wordToCheck,
               setOpenMessageDialog,
             }}

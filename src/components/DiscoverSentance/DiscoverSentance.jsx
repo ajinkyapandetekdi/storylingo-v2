@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../../node_modules/axios/index";
+import axios from "axios";
 import elephant from "../../assets/images/elephant.svg";
 import {
   callConfetti,
@@ -9,11 +9,12 @@ import {
 } from "../../utils/constants";
 import WordsOrImage from "../Mechanism/WordsOrImage";
 import { uniqueId } from "../../services/utilService";
-import useSound from "use-sound";
 import LevelCompleteAudio from "../../assets/audio/levelComplete.wav";
 import config from "../../utils/urlConstants.json";
 import { MessageDialog } from "../Assesment/Assesment";
 import { Log } from "../../services/telementryService";
+
+export const DiscoverContext = createContext(null);
 
 const SpeakSentenceComponent = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -304,7 +305,16 @@ const SpeakSentenceComponent = () => {
     // }
   };
   return (
-    <>
+    <DiscoverContext.Provider
+      value={{
+        enableNext,
+        setEnableNext,
+        isNextButtonCalled,
+        setIsNextButtonCalled,
+        setVoiceText,
+        handleNext,
+      }}
+    >
       {!!openMessageDialog && (
         <MessageDialog
           message={openMessageDialog.message}
@@ -326,14 +336,11 @@ const SpeakSentenceComponent = () => {
           words: questions[currentQuestion]?.contentSourceData?.[0]?.text,
           contentType: currentContentType,
           contentId: questions[currentQuestion]?.contentId,
-          setVoiceText,
           setRecordedAudio,
           setVoiceAnimate,
           storyLine,
-          handleNext,
           type: questions[currentQuestion]?.contentType,
           image: elephant,
-          enableNext,
           showTimer: false,
           points,
           steps: questions?.length,
@@ -342,13 +349,10 @@ const SpeakSentenceComponent = () => {
           callUpdateLearner: true,
           disableScreen,
           handleBack,
-          setEnableNext,
-          isNextButtonCalled,
-          setIsNextButtonCalled,
           setOpenMessageDialog,
         }}
       />
-    </>
+    </DiscoverContext.Provider>
   );
 };
 

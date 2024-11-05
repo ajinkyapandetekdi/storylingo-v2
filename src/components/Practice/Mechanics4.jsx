@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import VoiceAnalyser from "../../utils/VoiceAnalyser";
 import MainLayout from "../Layouts.jsx/MainLayout";
 // import useSound from "use-sound";
@@ -12,22 +12,20 @@ import correctSound from "../../assets/audio/correct.wav";
 import wrongSound from "../../assets/audio/wrong.wav";
 import addSound from "../../assets/audio/add.mp3";
 import removeSound from "../../assets/audio/remove.wav";
+import { MyContext } from "../../views/Practice/Practice";
 import { splitGraphemes } from "split-graphemes";
 
 const Mechanics4 = ({
   page,
   setPage,
-  setVoiceText,
   setRecordedAudio,
   setVoiceAnimate,
   storyLine,
   type,
-  handleNext,
   background,
   header,
   parentWords = "",
   image,
-  enableNext,
   showTimer,
   points,
   steps,
@@ -38,12 +36,10 @@ const Mechanics4 = ({
   isDiscover,
   progressData,
   showProgress,
-  playTeacherAudio = () => {},
   callUpdateLearner,
   disableScreen,
   isShowCase,
   handleBack,
-  setEnableNext,
   loading,
   setOpenMessageDialog,
   audio,
@@ -52,6 +48,7 @@ const Mechanics4 = ({
     type === "word" ? [] : ["Friend", "She is", "My"]
   );
   const [wordsAfterSplit, setWordsAfterSplit] = useState([]);
+  const { setEnableNext } = useContext(MyContext) || {};
 
   useEffect(() => {
     setSelectedWords([]);
@@ -152,8 +149,6 @@ const Mechanics4 = ({
   return (
     <MainLayout
       background={background}
-      handleNext={handleNext}
-      enableNext={enableNext}
       showTimer={showTimer}
       points={points}
       pageName={"m4"}
@@ -163,7 +158,6 @@ const Mechanics4 = ({
         level,
         progressData,
         showProgress,
-        playTeacherAudio,
         handleBack,
         disableScreen,
         loading,
@@ -332,24 +326,19 @@ const Mechanics4 = ({
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <VoiceAnalyser
             pageName={"m4"}
-            setVoiceText={setVoiceText}
             setRecordedAudio={setRecordedAudio}
             setVoiceAnimate={setVoiceAnimate}
             storyLine={storyLine}
             dontShowListen={type === "image" || isDiscover}
             // updateStory={updateStory}
-            handleNext={handleNext}
-            enableNext={enableNext}
             originalText={parentWords}
             audioLink={audio ? audio : null}
             {...{
               contentId,
               contentType,
               currentLine: currentStep - 1,
-              playTeacherAudio,
               callUpdateLearner,
               isShowCase,
-              setEnableNext,
               showOnlyListen: answer !== "correct",
               setOpenMessageDialog,
             }}
