@@ -247,7 +247,7 @@ const Mechanics2 = ({
                 left: {
                   xs: 0, // For extra small screens
                   sm: 0, // For small screens
-                  md: "-40px", // Adjust position for medium screens
+                  md: "0px", // Adjust position for medium screens
                   lg: "0px",
                   xl: "0px",
                 },

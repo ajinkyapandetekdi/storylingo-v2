@@ -45,8 +45,6 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MainLayout = (props) => {
-  console.log("MainLayout");
-
   const levelsImages = {
     1: {
       milestone: <LevelOne />,
@@ -735,11 +733,167 @@ const MainLayout = (props) => {
                       }}
                     >
                       {gameOverData?.userWon ? (
-                        <img
-                          src={gameWon}
-                          alt="gameWon"
-                          style={{ zIndex: 9999, height: 340 }}
-                        />
+                        <Stack
+                          direction={"row"}
+                          sx={{
+                            display: "flex",
+                            // justifyContent: "center",
+                            // position: "relative",
+                            // zIndex: "100",
+                          }}
+                        >
+                          <Stack>
+                            <img
+                              src={gameWon}
+                              alt="gameWon"
+                              style={{ zIndex: 9999, height: 340 }}
+                            />
+                          </Stack>
+                          <Stack
+                            sx={{
+                              boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;",
+                              paddingY: "49px",
+                              paddingX: "30px",
+                              borderRadius: "13px",
+                              marginLeft: "80px",
+                              bgcolor: "#FFFFFF",
+                              zIndex: 100,
+                            }}
+                            direction={"row"}
+                          >
+                            <Stack
+                              sx={{
+                                paddingRight:
+                                  (props.pageName === "wordsorimage" ||
+                                    props.pageName === "m5") &&
+                                  !fluency
+                                    ? "20px"
+                                    : "0px",
+                                borderRight:
+                                  (props.pageName === "wordsorimage" ||
+                                    props.pageName === "m5") &&
+                                  !fluency
+                                    ? "1px dashed grey"
+                                    : "none",
+                              }}
+                            >
+                              {(props.pageName === "wordsorimage" ||
+                                props.pageName === "m5") &&
+                                storedData?.map((elem, index) => (
+                                  <Stack
+                                    key={index}
+                                    justifyContent={"start"}
+                                    alignItems={"center"}
+                                    direction={"row"}
+                                    mt={index > 0 ? "25px" : 0}
+                                  >
+                                    <Box
+                                      sx={{
+                                        marginLeft: "35px",
+                                        marginRight: "5px",
+                                      }}
+                                    >
+                                      {elem?.audioUrl ? (
+                                        <button
+                                          onClick={() => handleAudioPlay(index)}
+                                          style={{
+                                            height: "30px",
+                                            cursor: "pointer",
+                                            background: "none",
+                                            border: "none",
+                                            padding: "0",
+                                          }}
+                                          aria-label={
+                                            audioPlaying === index
+                                              ? "Pause audio"
+                                              : "Play audio"
+                                          }
+                                        >
+                                          <img
+                                            src={
+                                              audioPlaying === index
+                                                ? pauseButton
+                                                : playButton
+                                            }
+                                            alt={
+                                              audioPlaying === index
+                                                ? "Pause"
+                                                : "Play"
+                                            }
+                                            style={{ height: "30px" }}
+                                          />
+                                        </button>
+                                      ) : (
+                                        <Box></Box>
+                                      )}
+                                      <audio
+                                        ref={(el) =>
+                                          (audioRefs.current[index] = el)
+                                        }
+                                        src={elem?.audioUrl}
+                                      />
+                                    </Box>
+
+                                    {elem?.correctAnswer === false ? (
+                                      <img
+                                        src="https://raw.githubusercontent.com/Sunbird-ALL/all-learner-ai-app/refs/heads/all-1.2-tn-dev/src/assets/wrong.svg"
+                                        alt="wrongImage"
+                                      />
+                                    ) : (
+                                      <img
+                                        src="https://raw.githubusercontent.com/Sunbird-ALL/all-learner-ai-app/refs/heads/all-1.2-tn-dev/src/assets/correct.svg"
+                                        alt="correctImage"
+                                      />
+                                    )}
+                                    <span
+                                      style={{
+                                        marginLeft: "8px",
+                                        color: "#1E2937",
+                                        fontWeight: 700,
+                                        lineHeight: "30px",
+                                        fontSize: "15px",
+                                        fontFamily: "Quicksand",
+                                        minWidth: "100px",
+                                      }}
+                                    >
+                                      {elem.selectedAnswer || "Binocular"}
+                                    </span>
+                                  </Stack>
+                                ))}
+                            </Stack>
+                            {!fluency && (
+                              <Stack
+                                sx={{
+                                  paddingLeft:
+                                    (props.pageName === "wordsorimage" ||
+                                      props.pageName === "m5") &&
+                                    !fluency
+                                      ? "20px"
+                                      : "0px",
+                                }}
+                                justifyContent={"center"}
+                                alignItems={"center"}
+                              >
+                                <img
+                                  src="https://raw.githubusercontent.com/Sunbird-ALL/all-learner-ai-app/refs/heads/all-1.2-tn-dev/src/assets/turtle.svg"
+                                  alt="turtleImage"
+                                />
+                                <span
+                                  style={{
+                                    marginTop: "12px",
+                                    color: "#1E2937",
+                                    fontWeight: 700,
+                                    lineHeight: "25px",
+                                    fontSize: "20px",
+                                    fontFamily: "Quicksand",
+                                  }}
+                                >
+                                  {"Oops, a bit slow!"}
+                                </span>
+                              </Stack>
+                            )}
+                          </Stack>
+                        </Stack>
                       ) : (
                         <Stack
                           justifyContent="center"
@@ -1175,7 +1329,7 @@ const MainLayout = (props) => {
 
 MainLayout.propTypes = {
   contentType: PropTypes.string,
-  handleBack: PropTypes.func,
+  handleBack: PropTypes.any,
   disableScreen: PropTypes.bool,
   isShowCase: PropTypes.bool,
   showProgress: PropTypes.bool,

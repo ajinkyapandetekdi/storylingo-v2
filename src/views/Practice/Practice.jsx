@@ -239,10 +239,7 @@ const Practice = () => {
               user_id: virtualId,
               totalSyllableCount: totalSyllableCount,
               language: localStorage.getItem("lang"),
-              is_mechanics:
-                currentGetContent && currentGetContent?.mechanism?.id
-                  ? true
-                  : false,
+              is_mechanics: mechanism && mechanism?.id ? true : false,
             }
           );
           const { data: getSetData } = getSetResultRes;
