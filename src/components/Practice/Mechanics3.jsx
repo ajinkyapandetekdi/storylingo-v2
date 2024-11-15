@@ -1,6 +1,5 @@
-import { Box, Grid, Typography } from "@mui/material";
-import HomophonesFinder from "homophones";
-import React, { createRef, useEffect, useState } from "react";
+import { Box, Grid, Typography, Modal } from "@mui/material";
+import React, { createRef, useContext, useEffect, useState } from "react";
 import {
   AudioBarColoredSvg,
   AudioBarSvg,
@@ -8,32 +7,28 @@ import {
   PlayAudioButton,
   StopAudioButton,
   getLocalData,
-  randomizeArray,
 } from "../../utils/constants";
 import MainLayout from "../Layouts.jsx/MainLayout";
 import correctSound from "../../assets/audio/correct.wav";
 import wrongSound from "../../assets/audio/wrong.wav";
 import removeSound from "../../assets/audio/remove.wav";
 import VoiceAnalyser from "../../utils/VoiceAnalyser";
-import { Modal } from "@mui/material";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
+import { MyContext } from "../../views/Practice/Practice";
 
 // TODO: update it as per File name OR update file name as per export variable name
 const Mechanics2 = ({
   page,
   setPage,
   type,
-  handleNext,
   background,
   header,
   parentWords,
   image,
-  setVoiceText,
   setRecordedAudio,
   setVoiceAnimate,
   storyLine,
-  enableNext,
   showTimer,
   points,
   steps,
@@ -44,18 +39,18 @@ const Mechanics2 = ({
   isDiscover,
   progressData,
   showProgress,
-  playTeacherAudio = () => {},
   callUpdateLearner,
   disableScreen,
   isShowCase,
   handleBack,
   allWords,
-  setEnableNext,
   loading,
   setOpenMessageDialog,
   options,
   audio,
 }) => {
+  const { enableNext, setEnableNext } = useContext(MyContext) || {};
+
   const [words, setWords] = useState([]);
   const [sentences, setSentences] = useState([]);
   const [zoomOpen, setZoomOpen] = useState(false);
@@ -131,8 +126,6 @@ const Mechanics2 = ({
   return (
     <MainLayout
       background={background}
-      handleNext={handleNext}
-      enableNext={enableNext}
       showTimer={showTimer}
       points={points}
       pageName={"m3"}
@@ -142,7 +135,6 @@ const Mechanics2 = ({
         level,
         progressData,
         showProgress,
-        playTeacherAudio,
         handleBack,
         disableScreen,
         loading,
@@ -482,7 +474,6 @@ const Mechanics2 = ({
       {
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <VoiceAnalyser
-            setVoiceText={setVoiceText}
             pageName={"m3"}
             setRecordedAudio={setRecordedAudio}
             setVoiceAnimate={setVoiceAnimate}
@@ -490,17 +481,13 @@ const Mechanics2 = ({
             dontShowListen={type === "image" || isDiscover}
             // updateStory={updateStory}
             originalText={parentWords}
-            enableNext={enableNext}
-            handleNext={handleNext}
             audioLink={audio ? audio : null}
             {...{
               contentId,
               contentType,
               currentLine: currentStep - 1,
-              playTeacherAudio,
               callUpdateLearner,
               isShowCase,
-              setEnableNext,
               showOnlyListen: !answer?.isAns,
               setOpenMessageDialog,
             }}

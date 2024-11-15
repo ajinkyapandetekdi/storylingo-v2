@@ -1,23 +1,22 @@
 import { Box, CardContent, Typography, CircularProgress } from "@mui/material";
-import { createRef, useState, useEffect } from "react";
+import { createRef, useState, useEffect, useContext } from "react";
 import v11 from "../../assets/audio/V10.mp3";
 import VoiceAnalyser from "../../utils/VoiceAnalyser";
 import { PlayAudioButton, StopAudioButton } from "../../utils/constants";
 import MainLayout from "../Layouts.jsx/MainLayout";
 import PropTypes from "prop-types";
+import { MyContext } from "../../views/Practice/Practice";
+import { DiscoverContext } from "../DiscoverSentance/DiscoverSentance";
 
 const WordsOrImage = ({
-  handleNext,
   background,
   header,
   type,
   words,
   image,
-  setVoiceText,
   setRecordedAudio,
   setVoiceAnimate,
   storyLine,
-  enableNext,
   showTimer,
   points,
   steps,
@@ -30,12 +29,10 @@ const WordsOrImage = ({
   isDiscover,
   progressData,
   showProgress,
-  playTeacherAudio = () => {},
   callUpdateLearner,
   disableScreen,
   isShowCase,
   handleBack,
-  setEnableNext,
   startShowCase,
   setStartShowCase,
   livesData,
@@ -45,17 +42,15 @@ const WordsOrImage = ({
   matchedChar,
   loading,
   setOpenMessageDialog,
-  isNextButtonCalled,
-  setIsNextButtonCalled,
 }) => {
+  const myContext = useContext(MyContext);
+  const discoverContext = useContext(DiscoverContext);
+  const { handleNext } = myContext || discoverContext || {};
   const audioRef = createRef(null);
   const [duration, setDuration] = useState(0);
   const [isReady, setIsReady] = useState(false);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [storedData, setStoredData] = useState([]);
-
-  //console.log('wordsORimage', words, storedData);
 
   const updateStoredData = (audio, isCorrect) => {
     if (audio && words) {
@@ -91,8 +86,6 @@ const WordsOrImage = ({
   return (
     <MainLayout
       background={background}
-      handleNext={handleNext}
-      enableNext={enableNext}
       showTimer={showTimer}
       points={points}
       storedData={storedData}
@@ -107,7 +100,6 @@ const WordsOrImage = ({
         contentType,
         percentage,
         fluency,
-        playTeacherAudio,
         handleBack,
         isShowCase,
         startShowCase,
@@ -116,7 +108,6 @@ const WordsOrImage = ({
         livesData,
         gameOverData,
         loading,
-        setIsNextButtonCalled,
       }}
     >
       <CardContent
@@ -264,7 +255,6 @@ const WordsOrImage = ({
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <VoiceAnalyser
             pageName={"wordsorimage"}
-            setVoiceText={setVoiceText}
             updateStoredData={updateStoredData}
             setRecordedAudio={setRecordedAudio}
             setVoiceAnimate={setVoiceAnimate}
@@ -272,21 +262,15 @@ const WordsOrImage = ({
             dontShowListen={type === "image" || isDiscover}
             // updateStory={updateStory}
             originalText={words}
-            handleNext={handleNext}
-            enableNext={enableNext}
             isShowCase={isShowCase || isDiscover}
             {...{
               contentId,
               contentType,
               currentLine: currentStep - 1,
-              playTeacherAudio,
               callUpdateLearner,
-              setEnableNext,
               livesData,
               setLivesData,
               setOpenMessageDialog,
-              isNextButtonCalled,
-              setIsNextButtonCalled,
             }}
           />
         </Box>
@@ -296,14 +280,11 @@ const WordsOrImage = ({
 };
 
 WordsOrImage.propTypes = {
-  handleNext: PropTypes.func.isRequired,
   // background: PropTypes.string,
   header: PropTypes.string,
   image: PropTypes.string,
-  setVoiceText: PropTypes.func.isRequired,
   setRecordedAudio: PropTypes.func.isRequired,
   setVoiceAnimate: PropTypes.func.isRequired,
-  enableNext: PropTypes.bool,
   showTimer: PropTypes.bool,
   points: PropTypes.number,
   currentStep: PropTypes.number.isRequired,
@@ -315,14 +296,11 @@ WordsOrImage.propTypes = {
   disableScreen: PropTypes.bool,
   isShowCase: PropTypes.bool,
   handleBack: PropTypes.func.isRequired,
-  setEnableNext: PropTypes.func.isRequired,
   startShowCase: PropTypes.bool,
   setStartShowCase: PropTypes.func,
   setLivesData: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   setOpenMessageDialog: PropTypes.func.isRequired,
-  isNextButtonCalled: PropTypes.bool,
-  setIsNextButtonCalled: PropTypes.func,
   background: PropTypes.bool,
   type: PropTypes.any,
   words: PropTypes.any,
@@ -332,7 +310,6 @@ WordsOrImage.propTypes = {
   contentType: PropTypes.string,
   level: PropTypes.any,
   progressData: PropTypes.object,
-  playTeacherAudio: PropTypes.func,
   livesData: PropTypes.any,
   gameOverData: PropTypes.any,
   highlightWords: PropTypes.func,
