@@ -1,12 +1,18 @@
 /* Route declarations for the app */
 
+import { lazy } from "react";
 import * as reviews from "../views";
+const PracticePage = lazy(() => import("../views/Practice/Practice"));
+const LoginPage = lazy(() => import("../views/LoginPage/LoginPage"));
+const DiscoverStart = lazy(() =>
+  import("../views/DiscoverStart/DiscoverStartPage")
+);
 
 const routData = [
   {
     id: "route-001",
     path: "/",
-    component: reviews.DiscoverStart,
+    component: DiscoverStart,
     requiresAuth: true,
   },
   {
@@ -18,7 +24,7 @@ const routData = [
   {
     id: "route-003",
     path: "/discover-start",
-    component: reviews.DiscoverStart,
+    component: DiscoverStart,
     requiresAuth: true,
   },
   {
@@ -30,7 +36,7 @@ const routData = [
   {
     id: "route-005",
     path: "/practice",
-    component: reviews.PracticePage,
+    component: PracticePage,
     requiresAuth: true,
   },
 
@@ -62,33 +68,29 @@ const routData = [
   {
     id: "route-010",
     path: "/login",
-    component: reviews.LoginPage,
+    component: LoginPage,
     requiresAuth: false,
   },
 ];
 // add login route for test rig
 
-const virtualId = localStorage.getItem('virtualId');
-const isLogin = process.env.REACT_APP_IS_IN_APP_AUTHORISATION === 'true';
+const virtualId = localStorage.getItem("virtualId");
+const isLogin = process.env.REACT_APP_IS_IN_APP_AUTHORISATION === "true";
 
 if (isLogin && !virtualId) {
-  routData.push(
-  {
+  routData.push({
     id: "route-000",
     path: "*",
-    component: reviews.LoginPage,
+    component: LoginPage,
     requiresAuth: false,
-  },
-  );
-}else {
-  routData.push(
-  {
+  });
+} else {
+  routData.push({
     id: "route-000",
     path: "*",
-    component: reviews.DiscoverStart,
+    component: DiscoverStart,
     requiresAuth: false,
-  },
-  );
+  });
 }
 
 export default routData;
